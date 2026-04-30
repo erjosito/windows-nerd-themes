@@ -20,24 +20,37 @@ if (-not (Test-Path $settingsDir)) {
 # --- Install Extensions ---
 
 if ($Config.extensions) {
-    Write-Host "  Installing VSCode extensions..." -ForegroundColor Gray
     $codeCmd = Get-Command code -ErrorAction SilentlyContinue
     if (-not $codeCmd) {
         Write-Warning "  'code' command not found. Install VSCode CLI or add to PATH."
-    } else {
-        foreach ($ext in $Config.extensions) {
-            if ($DryRun) {
-                Write-Host "    [DRY RUN] Would install: $ext" -ForegroundColor Yellow
-            } else {
-                $installed = code --list-extensions 2>$null | Where-Object { $_ -eq $ext }
-                if ($installed) {
-                    Write-Host "    ✓ $ext (already installed)" -ForegroundColor Green
-                } else {
-                    Write-Host "    ⬇ Installing $ext..." -ForegroundColor Gray
-                    code --install-extension $ext --force 2>$null
-                    Write-Host "    ✓ $ext" -ForegroundColor Green
-                }
-            }
+        return
+    }
+
+    # Filter to extensions not already installed
+    $installedExts = code --list-extensions 2>$null
+    $missingExts = $Config.extensions | Where-Object { $_ -notin $installedExts }
+
+    if ($missingExts -and -not $DryRun) {
+        Write-Host "  The following VSCode extensions are required by the theme:" -ForegroundColor Gray
+        foreach ($ext in $missingExts) {
+            Write-Host "    • $ext" -ForegroundColor White
+        }
+        $answer = Read-Host "  Install these extensions? [y/N]"
+        if ($answer -ne 'y' -and $answer -ne 'Y') {
+            Write-Host "  ⊘ Skipping VSCode configuration (required extensions not installed)" -ForegroundColor Yellow
+            return
+        }
+    }
+
+    foreach ($ext in $Config.extensions) {
+        if ($DryRun) {
+            Write-Host "    [DRY RUN] Would install: $ext" -ForegroundColor Yellow
+        } elseif ($ext -in $missingExts) {
+            Write-Host "    ⬇ Installing $ext..." -ForegroundColor Gray
+            code --install-extension $ext --force 2>$null
+            Write-Host "    ✓ $ext" -ForegroundColor Green
+        } else {
+            Write-Host "    ✓ $ext (already installed)" -ForegroundColor Green
         }
     }
 }

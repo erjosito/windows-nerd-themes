@@ -109,7 +109,7 @@ if (-not (Test-Path $themeJsonPath)) {
 Write-Host @"
 
 ╔══════════════════════════════════════════════════╗
-║        Windows Nerd Themes Installer            ║
+║        Windows Nerd Themes Installer             ║
 ╚══════════════════════════════════════════════════╝
 "@ -ForegroundColor Magenta
 

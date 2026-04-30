@@ -15,7 +15,19 @@ param(
 $terminalSettingsPath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
 $terminalRoamingPath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\RoamingState"
 
+# Detect unsupported Windows Terminal variants
+$previewPath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json"
+$unpackagedPath = "$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json"
+
 if (-not (Test-Path $terminalSettingsPath)) {
+    if (Test-Path $previewPath) {
+        Write-Error "Windows Terminal Preview is not currently supported. Please install the stable version from the Microsoft Store."
+        return
+    }
+    if (Test-Path $unpackagedPath) {
+        Write-Error "Unpackaged Windows Terminal (e.g. scoop/winget portable) is not currently supported. Please install the stable version from the Microsoft Store."
+        return
+    }
     Write-Warning "Windows Terminal settings not found. Is Windows Terminal installed?"
     return
 }
@@ -77,6 +89,10 @@ foreach ($profile in $Config.profiles.PSObject.Properties) {
 
         if (Test-Path $sourcePath) {
             if (-not $DryRun) {
+                $destDir = Split-Path $destPath -Parent
+                if (-not (Test-Path $destDir)) {
+                    New-Item -ItemType Directory -Path $destDir -Force | Out-Null
+                }
                 Copy-Item $sourcePath $destPath -Force
             }
             Write-Host "    ✓ $bgImage" -ForegroundColor Green
@@ -86,6 +102,10 @@ foreach ($profile in $Config.profiles.PSObject.Properties) {
             if ($imageUrl -and -not $DryRun) {
                 Write-Host "    ⬇ Downloading $bgImage..." -ForegroundColor Gray
                 try {
+                    $destDir = Split-Path $destPath -Parent
+                    if (-not (Test-Path $destDir)) {
+                        New-Item -ItemType Directory -Path $destDir -Force | Out-Null
+                    }
                     Invoke-WebRequest -Uri $imageUrl -OutFile $destPath -UseBasicParsing
                     Write-Host "    ✓ $bgImage (downloaded)" -ForegroundColor Green
                 } catch {
@@ -138,7 +158,7 @@ foreach ($profileEntry in $Config.profiles.PSObject.Properties) {
     # Generate a consistent GUID from the name
     $guidBytes = [System.Text.Encoding]::UTF8.GetBytes($p.name)
     $hash = [System.Security.Cryptography.MD5]::Create().ComputeHash($guidBytes)
-    $guid = [guid]::new($hash[0..3] + $hash[4..5] + $hash[6..7] + $hash[8..15])
+    $guid = [guid]::new([byte[]]$hash[0..15])
     $profileObj.guid = "{$guid}"
 
     $profilesList += $profileObj

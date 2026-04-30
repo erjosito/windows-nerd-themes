@@ -105,15 +105,15 @@ $pathAdditions = ($Config.path_additions -join ":")
 
 $zshrcContent = @"
 # Enable Powerlevel10k instant prompt
-if [[ -r "\\\${XDG_CACHE_HOME:-\\\$HOME/.cache}/p10k-instant-prompt-\\\${(%):-%n}.zsh" ]]; then
-  source "\\\${XDG_CACHE_HOME:-\\\$HOME/.cache}/p10k-instant-prompt-\\\${(%):-%n}.zsh"
+if [[ -r "`${XDG_CACHE_HOME:-`$HOME/.cache}/p10k-instant-prompt-`${(%):-%n}.zsh" ]]; then
+  source "`${XDG_CACHE_HOME:-`$HOME/.cache}/p10k-instant-prompt-`${(%):-%n}.zsh"
 fi
 
 # Path
-export PATH="$pathAdditions:\\\$PATH"
+export PATH="${pathAdditions}:`$PATH"
 
 # oh-my-zsh configuration
-export ZSH="\\\$HOME/.oh-my-zsh"
+export ZSH="`$HOME/.oh-my-zsh"
 ZSH_THEME="$($Config.oh_my_zsh.theme)"
 
 # Plugins
@@ -130,7 +130,7 @@ if ($Config.oh_my_zsh.settings) {
 
 $zshrcContent += @"
 
-source \\\$ZSH/oh-my-zsh.sh
+source `$ZSH/oh-my-zsh.sh
 
 "@
 
@@ -148,9 +148,9 @@ $zshrcContent += @"
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # NVM
-export NVM_DIR="\\\$HOME/.nvm"
-[ -s "\\\$NVM_DIR/nvm.sh" ] && \\. "\\\$NVM_DIR/nvm.sh"
-[ -s "\\\$NVM_DIR/bash_completion" ] && \\. "\\\$NVM_DIR/bash_completion"
+export NVM_DIR="`$HOME/.nvm"
+[ -s "`$NVM_DIR/nvm.sh" ] && \. "`$NVM_DIR/nvm.sh"
+[ -s "`$NVM_DIR/bash_completion" ] && \. "`$NVM_DIR/bash_completion"
 
 cd
 "@
