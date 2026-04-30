@@ -1,0 +1,227 @@
+{
+  "name": "Star Wars",
+  "description": "A Star Wars themed configuration for Windows Terminal, WSL, and PowerShell",
+  "author": "erjosito",
+
+  "components": {
+    "wallpaper": {
+      "enabled": true,
+      "image": "assets/wallpapers/desktop_star_wars.jpg",
+      "image_url": "https://images.unsplash.com/photo-1579566346927-c68383817a25?w=3840",
+      "style": "fill"
+    },
+
+    "screensaver": {
+      "enabled": true,
+      "type": "mystify",
+      "timeout_minutes": 10
+    },
+
+    "windows_terminal": {
+      "enabled": true,
+      "launch_mode": "maximized",
+      "confirm_close_all_tabs": false,
+
+      "color_schemes": [
+        {
+          "name": "VibrantTom",
+          "background": "#16171D",
+          "foreground": "#FFFFFF",
+          "black": "#A7A7A7",
+          "blue": "#44B4CC",
+          "cyan": "#19D1D8",
+          "green": "#CCFF04",
+          "purple": "#9933CC",
+          "red": "#FF6600",
+          "white": "#F5F5F5",
+          "yellow": "#FFD93D",
+          "brightBlack": "#E373C8",
+          "brightBlue": "#0000FF",
+          "brightCyan": "#19D1D8",
+          "brightGreen": "#81EC0D",
+          "brightPurple": "#FF00FF",
+          "brightRed": "#FF0000",
+          "brightWhite": "#E5E5E5",
+          "brightYellow": "#FFD93D",
+          "cursorColor": "#FFFFFF",
+          "selectionBackground": "#FFFFFF"
+        },
+        {
+          "name": "SolarizedDarkMod",
+          "background": "#073642",
+          "foreground": "#FDF6E3",
+          "black": "#073642",
+          "blue": "#268BD2",
+          "cyan": "#2AA198",
+          "green": "#859900",
+          "purple": "#D33682",
+          "red": "#D30102",
+          "white": "#EEE8D5",
+          "yellow": "#B58900",
+          "brightBlack": "#002B36",
+          "brightBlue": "#839496",
+          "brightCyan": "#93A1A1",
+          "brightGreen": "#586E75",
+          "brightPurple": "#6C71C4",
+          "brightRed": "#CB4B16",
+          "brightWhite": "#FDF6E3",
+          "brightYellow": "#657B83",
+          "cursorColor": "#FFFFFF",
+          "selectionBackground": "#FFFFFF"
+        }
+      ],
+
+      "profiles": {
+        "ubuntu": {
+          "name": "Ubuntu",
+          "commandline": "%SystemRoot%\\System32\\wsl.exe -d Ubuntu",
+          "background_image": "wallpaper_deathstar.jpg",
+          "background_image_url": "https://raw.githubusercontent.com/erjosito/windows-nerd-themes/main/assets/wallpapers/wallpaper_deathstar.jpg",
+          "background_image_opacity": 0.75,
+          "color_scheme": "Campbell",
+          "font_face": "MesloLGL Nerd Font Mono",
+          "font_size": 10,
+          "opacity": 75,
+          "cursor_shape": "bar",
+          "cursor_color": "#FFFFFF",
+          "tab_title": "Ubuntu",
+          "icon": "linux"
+        },
+        "powershell": {
+          "name": "PowerShell",
+          "commandline": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+          "background_image": "wallpaper_xwing.jpg",
+          "background_image_url": "https://raw.githubusercontent.com/erjosito/windows-nerd-themes/main/assets/wallpapers/wallpaper_xwing.jpg",
+          "background_image_opacity": 0.75,
+          "color_scheme": "VibrantTom",
+          "font_face": "MesloLGL Nerd Font",
+          "font_size": 10,
+          "opacity": 50,
+          "cursor_shape": "bar",
+          "cursor_color": "#FFFFFF",
+          "background_color": "#012456",
+          "tab_title": "PowerShell",
+          "icon": "powershell"
+        },
+        "powershell_admin": {
+          "name": "PowerShell (Admin)",
+          "commandline": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+          "elevate": true,
+          "background_image": "venator.png",
+          "background_image_url": "https://raw.githubusercontent.com/erjosito/windows-nerd-themes/main/assets/wallpapers/venator.png",
+          "background_image_opacity": 0.75,
+          "color_scheme": "VibrantTom",
+          "font_face": "MesloLGL Nerd Font",
+          "font_size": 10,
+          "opacity": 50,
+          "cursor_shape": "bar",
+          "cursor_color": "#FFFFFF",
+          "background_color": "#012456",
+          "tab_title": "PowerShell (Admin)",
+          "icon": "powershell"
+        },
+        "cmd": {
+          "name": "Command Prompt",
+          "commandline": "%SystemRoot%\\System32\\cmd.exe",
+          "background_image": "wallpaper_falcon.jpg",
+          "background_image_url": "https://raw.githubusercontent.com/erjosito/windows-nerd-themes/main/assets/wallpapers/wallpaper_falcon.jpg",
+          "background_image_opacity": 0.75,
+          "color_scheme": "Campbell",
+          "font_face": "MesloLGL Nerd Font Mono",
+          "font_size": 10,
+          "opacity": 75,
+          "cursor_shape": "bar",
+          "cursor_color": "#FFFFFF",
+          "tab_title": "CMD",
+          "icon": "cmd"
+        }
+      },
+
+      "nerd_fonts": [
+        {
+          "name": "MesloLGL Nerd Font",
+          "url": "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Meslo.zip"
+        },
+        {
+          "name": "MesloLGL Nerd Font Mono",
+          "url": "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Meslo.zip"
+        },
+        {
+          "name": "Mononoki Nerd Font",
+          "url": "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Mononoki.zip"
+        }
+      ]
+    },
+
+    "wsl": {
+      "enabled": true,
+      "distro": "Ubuntu",
+      "shell": "zsh",
+      "oh_my_zsh": {
+        "theme": "powerlevel10k/powerlevel10k",
+        "plugins": [
+          "git",
+          "zsh-autosuggestions",
+          "kubectl",
+          "tmux",
+          "aws",
+          "azure",
+          "history-substring-search"
+        ],
+        "custom_plugins": [
+          {
+            "name": "zsh-autosuggestions",
+            "repo": "https://github.com/zsh-users/zsh-autosuggestions"
+          },
+          {
+            "name": "zsh-syntax-highlighting",
+            "repo": "https://github.com/zsh-users/zsh-syntax-highlighting"
+          }
+        ],
+        "settings": {
+          "ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE": "fg=244",
+          "ZSH_TMUX_AUTOSTART": "true",
+          "ZSH_TMUX_AUTOCONNECT": "false"
+        }
+      },
+      "tools": {
+        "tmux": {
+          "enabled": true,
+          "autostart": true
+        },
+        "kubectl": {
+          "enabled": true,
+          "alias": "k"
+        },
+        "nvm": {
+          "enabled": true
+        }
+      },
+      "aliases": {
+        "k": "kubectl"
+      },
+      "path_additions": [
+        "$HOME/.local/bin",
+        "${KREW_ROOT:-$HOME/.krew}/bin"
+      ]
+    },
+
+    "powershell": {
+      "enabled": true,
+      "oh_my_posh": {
+        "enabled": true,
+        "theme": "star"
+      },
+      "modules": [
+        "PSReadLine",
+        "Az.Tools.Predictor",
+        "Terminal-Icons"
+      ],
+      "completions": {
+        "az_cli": true,
+        "kubectl": true
+      },
+      "aliases": {}
+    }
+  }
+}
