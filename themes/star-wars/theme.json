@@ -208,19 +208,42 @@
       "font_family": "'MesloLGL Nerd Font', Consolas, 'Courier New', monospace",
       "font_size": 13,
       "font_ligatures": true,
+      "minimap": false,
+      "bracket_pair_colorization": true,
+      "sticky_scroll": true,
+      "cursor_blinking": "expand",
+      "cursor_style": "line",
+      "word_wrap": "on",
+      "render_whitespace": "boundary",
       "terminal": {
         "font_family": "MesloLGL Nerd Font Mono",
         "font_size": 10,
-        "default_profile": "Ubuntu (WSL)"
+        "default_profile": "Ubuntu (WSL)",
+        "cursor_style": "underline"
+      },
+      "workbench": {
+        "activity_bar_location": "top",
+        "sidebar_position": "left",
+        "editor_tab_sizing": "shrink",
+        "startup_editor": "none"
       },
       "extensions": [
         "zhuangtongfa.Material-theme",
         "PKief.material-icon-theme",
         "ms-vscode-remote.remote-wsl",
         "ms-azuretools.vscode-azureresourcegroups",
+        "ms-azuretools.vscode-docker",
         "ms-kubernetes-tools.vscode-kubernetes-tools",
         "GitHub.copilot",
-        "oderwat.indent-rainbow"
+        "GitHub.copilot-chat",
+        "oderwat.indent-rainbow",
+        "eamodio.gitlens",
+        "usernamehw.errorlens",
+        "aaron-bond.better-comments",
+        "streetsidesoftware.code-spell-checker",
+        "ms-python.python",
+        "ms-vscode.powershell",
+        "hashicorp.terraform"
       ]
     },
 

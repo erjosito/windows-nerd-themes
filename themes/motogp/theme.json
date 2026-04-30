@@ -74,7 +74,7 @@
         "ubuntu": {
           "name": "Ubuntu",
           "commandline": "%SystemRoot%\\System32\\wsl.exe -d Ubuntu",
-          "background_image": "wallpapers/motogp_track.jpg",
+          "background_image": "wallpapers/bagnaia_ducati.jpg",
           "background_image_opacity": 0.70,
           "color_scheme": "RacingRed",
           "font_face": "Mononoki Nerd Font",
@@ -82,13 +82,13 @@
           "opacity": 70,
           "cursor_shape": "bar",
           "cursor_color": "#FF2D2D",
-          "tab_title": "Ubuntu",
+          "tab_title": "Ubuntu (Bagnaia)",
           "icon": "linux"
         },
         "powershell": {
           "name": "PowerShell",
           "commandline": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
-          "background_image": "wallpapers/motogp_rider.jpg",
+          "background_image": "wallpapers/marquez_lean.jpg",
           "background_image_opacity": 0.70,
           "color_scheme": "PodiumGold",
           "font_face": "Mononoki Nerd Font",
@@ -97,14 +97,14 @@
           "cursor_shape": "bar",
           "cursor_color": "#FFD700",
           "background_color": "#0D0D0D",
-          "tab_title": "PowerShell",
+          "tab_title": "PowerShell (Marquez)",
           "icon": "powershell"
         },
         "powershell_admin": {
           "name": "PowerShell (Admin)",
           "commandline": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
           "elevate": true,
-          "background_image": "wallpapers/motogp_podium.jpg",
+          "background_image": "wallpapers/acosta_speed.jpg",
           "background_image_opacity": 0.70,
           "color_scheme": "RacingRed",
           "font_face": "Mononoki Nerd Font",
@@ -113,13 +113,13 @@
           "cursor_shape": "bar",
           "cursor_color": "#FF2D2D",
           "background_color": "#1A0A0A",
-          "tab_title": "PowerShell (Admin)",
+          "tab_title": "Admin (Acosta)",
           "icon": "powershell"
         },
         "cmd": {
           "name": "Command Prompt",
           "commandline": "%SystemRoot%\\System32\\cmd.exe",
-          "background_image": "wallpapers/motogp_garage.jpg",
+          "background_image": "wallpapers/martin_aprilia.jpg",
           "background_image_opacity": 0.70,
           "color_scheme": "PodiumGold",
           "font_face": "Mononoki Nerd Font",
@@ -127,7 +127,7 @@
           "opacity": 70,
           "cursor_shape": "bar",
           "cursor_color": "#FFD700",
-          "tab_title": "CMD",
+          "tab_title": "CMD (Martin)",
           "icon": "cmd"
         }
       },
@@ -202,19 +202,42 @@
       "font_family": "'Mononoki Nerd Font', Consolas, 'Courier New', monospace",
       "font_size": 13,
       "font_ligatures": true,
+      "minimap": false,
+      "bracket_pair_colorization": true,
+      "sticky_scroll": true,
+      "cursor_blinking": "smooth",
+      "cursor_style": "line",
+      "word_wrap": "on",
+      "render_whitespace": "boundary",
       "terminal": {
         "font_family": "Mononoki Nerd Font",
         "font_size": 10,
-        "default_profile": "Ubuntu (WSL)"
+        "default_profile": "Ubuntu (WSL)",
+        "cursor_style": "block"
+      },
+      "workbench": {
+        "activity_bar_location": "top",
+        "sidebar_position": "left",
+        "editor_tab_sizing": "shrink",
+        "startup_editor": "none"
       },
       "extensions": [
         "teabyii.ayu",
         "PKief.material-icon-theme",
         "ms-vscode-remote.remote-wsl",
         "ms-azuretools.vscode-azureresourcegroups",
+        "ms-azuretools.vscode-docker",
         "ms-kubernetes-tools.vscode-kubernetes-tools",
         "GitHub.copilot",
-        "oderwat.indent-rainbow"
+        "GitHub.copilot-chat",
+        "oderwat.indent-rainbow",
+        "eamodio.gitlens",
+        "usernamehw.errorlens",
+        "aaron-bond.better-comments",
+        "streetsidesoftware.code-spell-checker",
+        "ms-python.python",
+        "ms-vscode.powershell",
+        "hashicorp.terraform"
       ]
     },
 

@@ -65,6 +65,23 @@ if ($Config.font_family)    { $themeSettings["editor.fontFamily"] = $Config.font
 if ($Config.font_size)      { $themeSettings["editor.fontSize"] = $Config.font_size }
 if ($Config.font_ligatures) { $themeSettings["editor.fontLigatures"] = $Config.font_ligatures }
 
+# Editor settings
+if ($null -ne $Config.minimap)                   { $themeSettings["editor.minimap.enabled"] = $Config.minimap }
+if ($null -ne $Config.bracket_pair_colorization) { $themeSettings["editor.bracketPairColorization.enabled"] = $Config.bracket_pair_colorization }
+if ($null -ne $Config.sticky_scroll)             { $themeSettings["editor.stickyScroll.enabled"] = $Config.sticky_scroll }
+if ($Config.cursor_blinking)                     { $themeSettings["editor.cursorBlinking"] = $Config.cursor_blinking }
+if ($Config.cursor_style)                        { $themeSettings["editor.cursorStyle"] = $Config.cursor_style }
+if ($Config.word_wrap)                           { $themeSettings["editor.wordWrap"] = $Config.word_wrap }
+if ($Config.render_whitespace)                   { $themeSettings["editor.renderWhitespace"] = $Config.render_whitespace }
+
+# Workbench settings
+if ($Config.workbench) {
+    if ($Config.workbench.activity_bar_location) { $themeSettings["workbench.activityBar.location"] = $Config.workbench.activity_bar_location }
+    if ($Config.workbench.sidebar_position)      { $themeSettings["workbench.sideBar.location"] = $Config.workbench.sidebar_position }
+    if ($Config.workbench.editor_tab_sizing)     { $themeSettings["workbench.editor.tabSizing"] = $Config.workbench.editor_tab_sizing }
+    if ($Config.workbench.startup_editor)        { $themeSettings["workbench.startupEditor"] = $Config.workbench.startup_editor }
+}
+
 # Terminal settings
 if ($Config.terminal) {
     if ($Config.terminal.font_family) {
@@ -75,6 +92,9 @@ if ($Config.terminal) {
     }
     if ($Config.terminal.default_profile) {
         $themeSettings["terminal.integrated.defaultProfile.windows"] = $Config.terminal.default_profile
+    }
+    if ($Config.terminal.cursor_style) {
+        $themeSettings["terminal.integrated.cursorStyle"] = $Config.terminal.cursor_style
     }
 }
 
