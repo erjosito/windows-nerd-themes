@@ -1,0 +1,239 @@
+{
+  "name": "MotoGP",
+  "description": "A MotoGP racing themed configuration with track backgrounds and high-speed vibes",
+  "author": "erjosito",
+
+  "components": {
+    "wallpaper": {
+      "enabled": true,
+      "image": "wallpapers/desktop_motogp.jpg",
+      "style": "fill"
+    },
+
+    "screensaver": {
+      "enabled": true,
+      "type": "mystify",
+      "timeout_minutes": 10
+    },
+
+    "windows_terminal": {
+      "enabled": true,
+      "launch_mode": "maximized",
+      "confirm_close_all_tabs": false,
+
+      "color_schemes": [
+        {
+          "name": "RacingRed",
+          "background": "#1A0A0A",
+          "foreground": "#F0F0F0",
+          "black": "#1A0A0A",
+          "blue": "#1E90FF",
+          "cyan": "#00CED1",
+          "green": "#32CD32",
+          "purple": "#9B59B6",
+          "red": "#FF2D2D",
+          "white": "#F5F5F5",
+          "yellow": "#FFD700",
+          "brightBlack": "#555555",
+          "brightBlue": "#6BB5FF",
+          "brightCyan": "#7FFFD4",
+          "brightGreen": "#90EE90",
+          "brightPurple": "#DDA0DD",
+          "brightRed": "#FF6B6B",
+          "brightWhite": "#FFFFFF",
+          "brightYellow": "#FFEB3B",
+          "cursorColor": "#FF2D2D",
+          "selectionBackground": "#FF2D2D"
+        },
+        {
+          "name": "PodiumGold",
+          "background": "#0D0D0D",
+          "foreground": "#E8E8E8",
+          "black": "#0D0D0D",
+          "blue": "#4169E1",
+          "cyan": "#20B2AA",
+          "green": "#00C853",
+          "purple": "#7B68EE",
+          "red": "#DC143C",
+          "white": "#DCDCDC",
+          "yellow": "#FFD700",
+          "brightBlack": "#696969",
+          "brightBlue": "#87CEEB",
+          "brightCyan": "#66CDAA",
+          "brightGreen": "#7CFC00",
+          "brightPurple": "#BA55D3",
+          "brightRed": "#FF4500",
+          "brightWhite": "#FFFFFF",
+          "brightYellow": "#FFA500",
+          "cursorColor": "#FFD700",
+          "selectionBackground": "#FFD700"
+        }
+      ],
+
+      "profiles": {
+        "ubuntu": {
+          "name": "Ubuntu",
+          "commandline": "%SystemRoot%\\System32\\wsl.exe -d Ubuntu",
+          "background_image": "wallpapers/motogp_track.jpg",
+          "background_image_opacity": 0.70,
+          "color_scheme": "RacingRed",
+          "font_face": "Mononoki Nerd Font",
+          "font_size": 10,
+          "opacity": 70,
+          "cursor_shape": "bar",
+          "cursor_color": "#FF2D2D",
+          "tab_title": "Ubuntu",
+          "icon": "linux"
+        },
+        "powershell": {
+          "name": "PowerShell",
+          "commandline": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+          "background_image": "wallpapers/motogp_rider.jpg",
+          "background_image_opacity": 0.70,
+          "color_scheme": "PodiumGold",
+          "font_face": "Mononoki Nerd Font",
+          "font_size": 10,
+          "opacity": 55,
+          "cursor_shape": "bar",
+          "cursor_color": "#FFD700",
+          "background_color": "#0D0D0D",
+          "tab_title": "PowerShell",
+          "icon": "powershell"
+        },
+        "powershell_admin": {
+          "name": "PowerShell (Admin)",
+          "commandline": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+          "elevate": true,
+          "background_image": "wallpapers/motogp_podium.jpg",
+          "background_image_opacity": 0.70,
+          "color_scheme": "RacingRed",
+          "font_face": "Mononoki Nerd Font",
+          "font_size": 10,
+          "opacity": 55,
+          "cursor_shape": "bar",
+          "cursor_color": "#FF2D2D",
+          "background_color": "#1A0A0A",
+          "tab_title": "PowerShell (Admin)",
+          "icon": "powershell"
+        },
+        "cmd": {
+          "name": "Command Prompt",
+          "commandline": "%SystemRoot%\\System32\\cmd.exe",
+          "background_image": "wallpapers/motogp_garage.jpg",
+          "background_image_opacity": 0.70,
+          "color_scheme": "PodiumGold",
+          "font_face": "Mononoki Nerd Font",
+          "font_size": 10,
+          "opacity": 70,
+          "cursor_shape": "bar",
+          "cursor_color": "#FFD700",
+          "tab_title": "CMD",
+          "icon": "cmd"
+        }
+      },
+
+      "nerd_fonts": [
+        {
+          "name": "Mononoki Nerd Font",
+          "url": "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Mononoki.zip"
+        }
+      ]
+    },
+
+    "wsl": {
+      "enabled": true,
+      "distro": "Ubuntu",
+      "shell": "zsh",
+      "oh_my_zsh": {
+        "theme": "powerlevel10k/powerlevel10k",
+        "plugins": [
+          "git",
+          "zsh-autosuggestions",
+          "zsh-syntax-highlighting",
+          "kubectl",
+          "tmux",
+          "aws",
+          "azure",
+          "history-substring-search",
+          "docker"
+        ],
+        "custom_plugins": [
+          {
+            "name": "zsh-autosuggestions",
+            "repo": "https://github.com/zsh-users/zsh-autosuggestions"
+          },
+          {
+            "name": "zsh-syntax-highlighting",
+            "repo": "https://github.com/zsh-users/zsh-syntax-highlighting"
+          }
+        ],
+        "settings": {
+          "ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE": "fg=244",
+          "ZSH_TMUX_AUTOSTART": "true",
+          "ZSH_TMUX_AUTOCONNECT": "false"
+        }
+      },
+      "tools": {
+        "tmux": {
+          "enabled": true,
+          "autostart": true
+        },
+        "kubectl": {
+          "enabled": true,
+          "alias": "k"
+        },
+        "nvm": {
+          "enabled": true
+        }
+      },
+      "aliases": {
+        "k": "kubectl"
+      },
+      "path_additions": [
+        "$HOME/.local/bin",
+        "${KREW_ROOT:-$HOME/.krew}/bin"
+      ]
+    },
+
+    "vscode": {
+      "enabled": true,
+      "color_theme": "Ayu Mirage",
+      "icon_theme": "material-icon-theme",
+      "font_family": "'Mononoki Nerd Font', Consolas, 'Courier New', monospace",
+      "font_size": 13,
+      "font_ligatures": true,
+      "terminal": {
+        "font_family": "Mononoki Nerd Font",
+        "font_size": 10,
+        "default_profile": "Ubuntu (WSL)"
+      },
+      "extensions": [
+        "teabyii.ayu",
+        "PKief.material-icon-theme",
+        "ms-vscode-remote.remote-wsl",
+        "ms-azuretools.vscode-azureresourcegroups",
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "GitHub.copilot",
+        "oderwat.indent-rainbow"
+      ]
+    },
+
+    "powershell": {
+      "enabled": true,
+      "oh_my_posh": {
+        "enabled": true,
+        "theme": "racing"
+      },
+      "modules": [
+        "PSReadLine",
+        "Az.Tools.Predictor",
+        "Terminal-Icons"
+      ],
+      "completions": {
+        "az_cli": true,
+        "kubectl": true
+      },
+      "aliases": {}
+    }
+  }
+}

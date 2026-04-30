@@ -1,0 +1,104 @@
+<#
+.SYNOPSIS
+    Configure Visual Studio Code with theme settings.
+#>
+param(
+    [Parameter(Mandatory)]
+    [PSCustomObject]$Config,
+
+    [switch]$DryRun
+)
+
+$settingsPath = "$env:APPDATA\Code\User\settings.json"
+$settingsDir = Split-Path $settingsPath -Parent
+
+if (-not (Test-Path $settingsDir)) {
+    Write-Warning "VSCode settings folder not found. Is VSCode installed?"
+    return
+}
+
+# --- Install Extensions ---
+
+if ($Config.extensions) {
+    Write-Host "  Installing VSCode extensions..." -ForegroundColor Gray
+    $codeCmd = Get-Command code -ErrorAction SilentlyContinue
+    if (-not $codeCmd) {
+        Write-Warning "  'code' command not found. Install VSCode CLI or add to PATH."
+    } else {
+        foreach ($ext in $Config.extensions) {
+            if ($DryRun) {
+                Write-Host "    [DRY RUN] Would install: $ext" -ForegroundColor Yellow
+            } else {
+                $installed = code --list-extensions 2>$null | Where-Object { $_ -eq $ext }
+                if ($installed) {
+                    Write-Host "    ✓ $ext (already installed)" -ForegroundColor Green
+                } else {
+                    Write-Host "    ⬇ Installing $ext..." -ForegroundColor Gray
+                    code --install-extension $ext --force 2>$null
+                    Write-Host "    ✓ $ext" -ForegroundColor Green
+                }
+            }
+        }
+    }
+}
+
+# --- Merge Settings ---
+
+Write-Host "  Updating VSCode settings..." -ForegroundColor Gray
+
+# Read existing settings (or empty object)
+$existingSettings = @{}
+if (Test-Path $settingsPath) {
+    try {
+        $existingSettings = Get-Content $settingsPath -Raw | ConvertFrom-Json -AsHashtable
+    } catch {
+        $existingSettings = @{}
+    }
+}
+
+# Apply theme settings
+$themeSettings = @{}
+
+if ($Config.color_theme)    { $themeSettings["workbench.colorTheme"] = $Config.color_theme }
+if ($Config.icon_theme)     { $themeSettings["workbench.iconTheme"] = $Config.icon_theme }
+if ($Config.font_family)    { $themeSettings["editor.fontFamily"] = $Config.font_family }
+if ($Config.font_size)      { $themeSettings["editor.fontSize"] = $Config.font_size }
+if ($Config.font_ligatures) { $themeSettings["editor.fontLigatures"] = $Config.font_ligatures }
+
+# Terminal settings
+if ($Config.terminal) {
+    if ($Config.terminal.font_family) {
+        $themeSettings["terminal.integrated.fontFamily"] = $Config.terminal.font_family
+    }
+    if ($Config.terminal.font_size) {
+        $themeSettings["terminal.integrated.fontSize"] = $Config.terminal.font_size
+    }
+    if ($Config.terminal.default_profile) {
+        $themeSettings["terminal.integrated.defaultProfile.windows"] = $Config.terminal.default_profile
+    }
+}
+
+if ($DryRun) {
+    Write-Host "    [DRY RUN] Would apply settings:" -ForegroundColor Yellow
+    foreach ($key in $themeSettings.Keys) {
+        Write-Host "      $key = $($themeSettings[$key])" -ForegroundColor Gray
+    }
+    return
+}
+
+# Backup
+if (Test-Path $settingsPath) {
+    $backupPath = "$settingsPath.backup.$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+    Copy-Item $settingsPath $backupPath
+    Write-Host "    ✓ Backup: $backupPath" -ForegroundColor Green
+}
+
+# Merge: theme settings override, but preserve everything else
+foreach ($key in $themeSettings.Keys) {
+    $existingSettings[$key] = $themeSettings[$key]
+}
+
+$existingSettings | ConvertTo-Json -Depth 10 | Set-Content $settingsPath -Encoding UTF8
+Write-Host "    ✓ Settings written to: $settingsPath" -ForegroundColor Green
+
+Write-Host "  ✓ VSCode configured" -ForegroundColor Green

@@ -6,8 +6,7 @@
   "components": {
     "wallpaper": {
       "enabled": true,
-      "image": "assets/wallpapers/desktop_star_wars.jpg",
-      "image_url": "https://images.unsplash.com/photo-1579566346927-c68383817a25?w=3840",
+      "image": "wallpapers/desktop_star_wars.jpg",
       "style": "fill"
     },
 
@@ -75,8 +74,7 @@
         "ubuntu": {
           "name": "Ubuntu",
           "commandline": "%SystemRoot%\\System32\\wsl.exe -d Ubuntu",
-          "background_image": "wallpaper_deathstar.jpg",
-          "background_image_url": "https://raw.githubusercontent.com/erjosito/windows-nerd-themes/main/assets/wallpapers/wallpaper_deathstar.jpg",
+          "background_image": "wallpapers/wallpaper_deathstar.jpg",
           "background_image_opacity": 0.75,
           "color_scheme": "Campbell",
           "font_face": "MesloLGL Nerd Font Mono",
@@ -90,8 +88,7 @@
         "powershell": {
           "name": "PowerShell",
           "commandline": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
-          "background_image": "wallpaper_xwing.jpg",
-          "background_image_url": "https://raw.githubusercontent.com/erjosito/windows-nerd-themes/main/assets/wallpapers/wallpaper_xwing.jpg",
+          "background_image": "wallpapers/wallpaper_xwing.jpg",
           "background_image_opacity": 0.75,
           "color_scheme": "VibrantTom",
           "font_face": "MesloLGL Nerd Font",
@@ -107,8 +104,7 @@
           "name": "PowerShell (Admin)",
           "commandline": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
           "elevate": true,
-          "background_image": "venator.png",
-          "background_image_url": "https://raw.githubusercontent.com/erjosito/windows-nerd-themes/main/assets/wallpapers/venator.png",
+          "background_image": "wallpapers/venator.png",
           "background_image_opacity": 0.75,
           "color_scheme": "VibrantTom",
           "font_face": "MesloLGL Nerd Font",
@@ -123,8 +119,7 @@
         "cmd": {
           "name": "Command Prompt",
           "commandline": "%SystemRoot%\\System32\\cmd.exe",
-          "background_image": "wallpaper_falcon.jpg",
-          "background_image_url": "https://raw.githubusercontent.com/erjosito/windows-nerd-themes/main/assets/wallpapers/wallpaper_falcon.jpg",
+          "background_image": "wallpapers/wallpaper_falcon.jpg",
           "background_image_opacity": 0.75,
           "color_scheme": "Campbell",
           "font_face": "MesloLGL Nerd Font Mono",
@@ -203,6 +198,29 @@
       "path_additions": [
         "$HOME/.local/bin",
         "${KREW_ROOT:-$HOME/.krew}/bin"
+      ]
+    },
+
+    "vscode": {
+      "enabled": true,
+      "color_theme": "One Dark Pro",
+      "icon_theme": "material-icon-theme",
+      "font_family": "'MesloLGL Nerd Font', Consolas, 'Courier New', monospace",
+      "font_size": 13,
+      "font_ligatures": true,
+      "terminal": {
+        "font_family": "MesloLGL Nerd Font Mono",
+        "font_size": 10,
+        "default_profile": "Ubuntu (WSL)"
+      },
+      "extensions": [
+        "zhuangtongfa.Material-theme",
+        "PKief.material-icon-theme",
+        "ms-vscode-remote.remote-wsl",
+        "ms-azuretools.vscode-azureresourcegroups",
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "GitHub.copilot",
+        "oderwat.indent-rainbow"
       ]
     },
 

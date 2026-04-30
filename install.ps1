@@ -4,10 +4,11 @@
 
 .DESCRIPTION
     Applies a theme configuration to Windows Terminal, WSL, PowerShell,
-    wallpaper, and screensaver. Themes are defined as JSON files.
+    wallpaper, and screensaver. Themes are self-contained folders or zip files
+    containing a theme.json and assets (wallpapers, fonts).
 
 .PARAMETER Theme
-    Name of the theme to apply (corresponds to a file in themes/ folder).
+    Name of the theme to apply (corresponds to a folder in themes/).
 
 .PARAMETER Components
     Comma-separated list of components to configure. Default: all.
@@ -20,13 +21,13 @@
     Show what would be done without making changes.
 
 .PARAMETER ThemeFile
-    Path to a custom theme JSON file (overrides -Theme).
+    Path to a theme folder, .json file, or .zip package (overrides -Theme).
 
 .EXAMPLE
     .\install.ps1 -Theme star-wars
-    .\install.ps1 -Theme star-wars -Exclude wallpaper,screensaver
+    .\install.ps1 -Theme motogp -Exclude wallpaper,screensaver
     .\install.ps1 -Theme star-wars -Components terminal,wsl
-    .\install.ps1 -ThemeFile C:\mytheme.json -DryRun
+    .\install.ps1 -ThemeFile C:\Downloads\my-theme.zip -DryRun
 #>
 
 [CmdletBinding()]
@@ -34,7 +35,7 @@ param(
     [Parameter(Position = 0)]
     [string]$Theme = "star-wars",
 
-    [string[]]$Components = @("wallpaper", "screensaver", "terminal", "wsl", "powershell"),
+    [string[]]$Components = @("wallpaper", "screensaver", "terminal", "wsl", "powershell", "vscode"),
 
     [string[]]$Exclude = @(),
 
@@ -68,6 +69,41 @@ function Write-Info {
     Write-Host "  ℹ $Message" -ForegroundColor Gray
 }
 
+# --- Resolve Theme Path ---
+
+$cleanupTempDir = $false
+
+if ($ThemeFile) {
+    if ($ThemeFile -match '\.zip$') {
+        # Extract zip to temp folder
+        $tempDir = Join-Path $env:TEMP "nerdtheme_$(Get-Random)"
+        Expand-Archive -Path $ThemeFile -DestinationPath $tempDir -Force
+        $themePath = $tempDir
+        $cleanupTempDir = $true
+    } elseif (Test-Path $ThemeFile -PathType Container) {
+        $themePath = $ThemeFile
+    } elseif ($ThemeFile -match '\.json$') {
+        # Legacy: bare JSON file
+        $themePath = Split-Path $ThemeFile -Parent
+    } else {
+        Write-Error "ThemeFile must be a folder, .json, or .zip: $ThemeFile"
+        exit 1
+    }
+} else {
+    $themePath = Join-Path $ScriptRoot "themes\$Theme"
+}
+
+# Find theme.json
+$themeJsonPath = Join-Path $themePath "theme.json"
+if (-not (Test-Path $themeJsonPath)) {
+    # Fallback: look for <name>.json (legacy format)
+    $themeJsonPath = Join-Path $themePath "$Theme.json"
+    if (-not (Test-Path $themeJsonPath)) {
+        Write-Error "Theme not found. Expected theme.json in: $themePath"
+        exit 1
+    }
+}
+
 # --- Load Theme ---
 
 Write-Host @"
@@ -77,18 +113,7 @@ Write-Host @"
 ╚══════════════════════════════════════════════════╝
 "@ -ForegroundColor Magenta
 
-if ($ThemeFile) {
-    $themeFilePath = $ThemeFile
-} else {
-    $themeFilePath = Join-Path $ScriptRoot "themes\$Theme.json"
-}
-
-if (-not (Test-Path $themeFilePath)) {
-    Write-Error "Theme file not found: $themeFilePath"
-    exit 1
-}
-
-$themeConfig = Get-Content $themeFilePath -Raw | ConvertFrom-Json
+$themeConfig = Get-Content $themeJsonPath -Raw | ConvertFrom-Json
 Write-Host "`nTheme: $($themeConfig.name)" -ForegroundColor White
 Write-Host "Description: $($themeConfig.description)" -ForegroundColor Gray
 
@@ -104,7 +129,7 @@ if ($DryRun) {
 
 if ("wallpaper" -in $activeComponents -and $themeConfig.components.wallpaper.enabled) {
     Write-Step "Configuring Desktop Wallpaper"
-    & "$ScriptRoot\scripts\configure-wallpaper.ps1" -Config $themeConfig.components.wallpaper -AssetsPath "$ScriptRoot\assets\wallpapers" -DryRun:$DryRun
+    & "$ScriptRoot\scripts\configure-wallpaper.ps1" -Config $themeConfig.components.wallpaper -AssetsPath $themePath -DryRun:$DryRun
 } elseif ("wallpaper" -in $Exclude) {
     Write-Skip "Wallpaper (excluded)"
 }
@@ -122,7 +147,7 @@ if ("screensaver" -in $activeComponents -and $themeConfig.components.screensaver
 
 if ("terminal" -in $activeComponents -and $themeConfig.components.windows_terminal.enabled) {
     Write-Step "Configuring Windows Terminal"
-    & "$ScriptRoot\scripts\configure-terminal.ps1" -Config $themeConfig.components.windows_terminal -AssetsPath "$ScriptRoot\assets\wallpapers" -DryRun:$DryRun
+    & "$ScriptRoot\scripts\configure-terminal.ps1" -Config $themeConfig.components.windows_terminal -AssetsPath $themePath -DryRun:$DryRun
 } elseif ("terminal" -in $Exclude) {
     Write-Skip "Windows Terminal (excluded)"
 }
@@ -143,6 +168,21 @@ if ("powershell" -in $activeComponents -and $themeConfig.components.powershell.e
     & "$ScriptRoot\scripts\configure-powershell.ps1" -Config $themeConfig.components.powershell -DryRun:$DryRun
 } elseif ("powershell" -in $Exclude) {
     Write-Skip "PowerShell (excluded)"
+}
+
+# --- Component: VSCode ---
+
+if ("vscode" -in $activeComponents -and $themeConfig.components.vscode.enabled) {
+    Write-Step "Configuring Visual Studio Code"
+    & "$ScriptRoot\scripts\configure-vscode.ps1" -Config $themeConfig.components.vscode -DryRun:$DryRun
+} elseif ("vscode" -in $Exclude) {
+    Write-Skip "VSCode (excluded)"
+}
+
+# --- Cleanup ---
+
+if ($cleanupTempDir -and (Test-Path $tempDir)) {
+    Remove-Item $tempDir -Recurse -Force -ErrorAction SilentlyContinue
 }
 
 # --- Done ---

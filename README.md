@@ -5,12 +5,38 @@ Customize your Windows setup with themed configurations for Windows Terminal, WS
 ## Features
 
 - **Theme-based configuration** — Define everything in a single JSON file
+- **Self-contained packages** — Each theme is a folder (or .zip) with JSON + images + fonts
 - **Modular components** — Enable/disable any component independently
 - **Windows Terminal** — Custom backgrounds, Nerd Fonts, color schemes, per-profile theming
 - **WSL (Ubuntu)** — oh-my-zsh with powerlevel10k, configurable plugins, tmux integration
 - **PowerShell** — oh-my-posh, PSReadLine predictions, Terminal-Icons, completions
+- **VSCode** — Color theme, icon theme, fonts, terminal config, extensions
 - **Desktop Wallpaper** — Automatic download and application
 - **Screensaver** — Configure type and timeout
+
+## Theme Packaging
+
+Each theme is a **self-contained folder** (or `.zip` archive) containing:
+
+```
+themes/my-theme/
+├── theme.json          # Configuration (required)
+├── wallpapers/         # Background images
+│   ├── terminal_bg.jpg
+│   └── desktop.jpg
+└── fonts/              # Optional bundled fonts
+    └── MyFont.zip
+```
+
+### Packaging a theme for sharing
+
+```powershell
+# Create a distributable .zip
+.\package-theme.ps1 -Theme star-wars
+
+# Install from a zip
+.\install.ps1 -ThemeFile .\themes\star-wars.zip
+```
 
 ## Quick Start
 
@@ -68,6 +94,13 @@ Configure per-profile backgrounds, fonts, color schemes, and opacity:
 - **Plugins**: git, zsh-autosuggestions, kubectl, tmux, aws, azure, history-substring-search
 - **Tools**: tmux (autostart), kubectl, nvm
 - **Custom plugins**: zsh-autosuggestions, zsh-syntax-highlighting
+
+### Component: VSCode
+
+- **Color Theme**: One Dark Pro (Star Wars) / Ayu Mirage (MotoGP)
+- **Icon Theme**: Material Icon Theme
+- **Font**: Nerd Font matching the terminal config
+- **Extensions**: Remote-WSL, Azure, Kubernetes, Copilot, Indent Rainbow
 
 ### Component: PowerShell
 
