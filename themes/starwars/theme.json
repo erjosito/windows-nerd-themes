@@ -88,6 +88,7 @@
         "powershell": {
           "name": "PowerShell",
           "commandline": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+          "starting_directory": "%USERPROFILE%",
           "background_image": "wallpapers/wallpaper_xwing.jpg",
           "background_image_opacity": 0.75,
           "color_scheme": "VibrantTom",
@@ -96,7 +97,6 @@
           "opacity": 50,
           "cursor_shape": "bar",
           "cursor_color": "#FFFFFF",
-          "background_color": "#012456",
           "tab_title": "PowerShell",
           "icon": "powershell"
         },
@@ -104,6 +104,7 @@
           "name": "PowerShell (Admin)",
           "commandline": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
           "elevate": true,
+          "starting_directory": "%USERPROFILE%",
           "background_image": "wallpapers/venator.png",
           "background_image_opacity": 0.75,
           "color_scheme": "VibrantTom",
@@ -112,13 +113,13 @@
           "opacity": 50,
           "cursor_shape": "bar",
           "cursor_color": "#FFFFFF",
-          "background_color": "#012456",
           "tab_title": "PowerShell (Admin)",
           "icon": "powershell"
         },
         "cmd": {
           "name": "Command Prompt",
           "commandline": "%SystemRoot%\\System32\\cmd.exe",
+          "starting_directory": "%USERPROFILE%",
           "background_image": "wallpapers/wallpaper_falcon.jpg",
           "background_image_opacity": 0.75,
           "color_scheme": "Campbell",

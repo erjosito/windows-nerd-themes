@@ -32,10 +32,10 @@ themes/my-theme/
 
 ```powershell
 # Create a distributable .zip
-.\package-theme.ps1 -Theme star-wars
+.\package-theme.ps1 -Theme starwars
 
 # Install from a zip
-.\install.ps1 -ThemeFile .\themes\star-wars.zip
+.\install.ps1 -ThemeFile .\themes\starwars.zip
 ```
 
 ## Quick Start
@@ -46,16 +46,16 @@ git clone https://github.com/erjosito/windows-nerd-themes.git
 cd windows-nerd-themes
 
 # Apply the Star Wars theme (all components)
-.\install.ps1 -Theme star-wars
+.\install.ps1 -Theme starwars
 
 # Apply only terminal and WSL
-.\install.ps1 -Theme star-wars -Components terminal,wsl
+.\install.ps1 -Theme starwars -Components terminal,wsl
 
 # Skip wallpaper and screensaver
-.\install.ps1 -Theme star-wars -Exclude wallpaper,screensaver
+.\install.ps1 -Theme starwars -Exclude wallpaper,screensaver
 
 # Dry run (preview without changes)
-.\install.ps1 -Theme star-wars -DryRun
+.\install.ps1 -Theme starwars -DryRun
 ```
 
 ## Theme Structure
@@ -111,7 +111,7 @@ Configure per-profile backgrounds, fonts, color schemes, and opacity:
 
 ## Creating a New Theme
 
-1. Copy `themes/star-wars.json` to `themes/my-theme.json`
+1. Copy `themes/starwars.json` to `themes/my-theme.json`
 2. Edit the JSON to customize:
    - Background images (local paths or URLs)
    - Color schemes

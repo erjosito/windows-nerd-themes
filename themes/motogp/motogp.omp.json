@@ -1,0 +1,143 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "background": "#000000",
+          "foreground": "#dd1e1e",
+          "style": "plain",
+          "template": " ⚡",
+          "type": "root"
+        },
+        {
+          "background": "#000000",
+          "foreground": "#ffffff",
+          "properties": {
+            "alpine": "",
+            "arch": "",
+            "centos": "",
+            "debian": "",
+            "elementary": "",
+            "fedora": "",
+            "gentoo": "",
+            "linux": "",
+            "macos": "",
+            "manjaro": "",
+            "mint": "",
+            "opensuse": "",
+            "raspbian": "",
+            "ubuntu": "",
+            "windows": "",
+            "wsl": ""
+          },
+          "style": "plain",
+          "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}} ",
+          "type": "os"
+        },
+        {
+          "background": "#272727",
+          "foreground": "#43CCEA",
+          "properties": {
+            "folder_icon": "",
+            "folder_separator_icon": " <#000000> </>",
+            "home_icon": "",
+            "style": "agnoster_short"
+          },
+          "style": "plain",
+          "template": " {{ .Path }} ",
+          "type": "path"
+        },
+        {
+          "background": "#272727",
+          "foreground": "#00ff0d",
+          "properties": {
+            "fetch_stash_count": true,
+            "fetch_status": true
+          },
+          "style": "plain",
+          "template": "<#000000> </>{{ .HEAD }}{{ if .Staging.Changed }}<#FF6F00>  {{ .Staging.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }}  {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }} ",
+          "type": "git"
+        },
+        {
+          "background": "#272727",
+          "foreground": "#ffffff",
+          "properties": {
+            "style": "dallas",
+            "threshold": 0
+          },
+          "style": "diamond",
+          "template": "<#000000> </>{{ .FormattedMs }}s ",
+          "trailing_diamond": "",
+          "type": "executiontime"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "az",
+          "style": "diamond",
+          "leading_diamond": "",
+          "background": "#272727",
+          "foreground": "#3A96DD",
+          "template": " 󰠅 {{ .Name }} ",
+          "properties": {
+            "source": "cli"
+          }
+        },
+        {
+          "type": "kubectl",
+          "style": "diamond",
+          "background": "#272727",
+          "foreground": "#43CCEA",
+          "template": "<#000000> </> 󱃾 {{ .Context }}{{ if .Namespace }} :: {{ .Namespace }}{{ end }} "
+        },
+        {
+          "background": "#272727",
+          "foreground": "#43CCEA",
+          "leading_diamond": "",
+          "style": "diamond",
+          "template": " {{ if .SSHSession }} {{ end }}{{ .UserName }}<transparent> / </>{{ .HostName }}",
+          "type": "session"
+        },
+        {
+          "background": "#272727",
+          "foreground": "#43CCEA",
+          "properties": {
+            "time_format": "3:04:05 PM"
+          },
+          "style": "diamond",
+          "template": "<#000000>  </>{{ .CurrentDate | date .Format }} ",
+          "trailing_diamond": "",
+          "type": "time"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "#00ff0d",
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}#ff0000{{ end }}"
+          ],
+          "properties": {
+            "always_enabled": true
+          },
+          "style": "plain",
+          "template": " ",
+          "type": "status"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "final_space": true,
+  "version": 3
+}

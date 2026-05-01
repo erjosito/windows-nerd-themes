@@ -93,7 +93,17 @@ foreach ($profile in $Config.profiles.PSObject.Properties) {
                 if (-not (Test-Path $destDir)) {
                     New-Item -ItemType Directory -Path $destDir -Force | Out-Null
                 }
-                Copy-Item $sourcePath $destPath -Force
+                try {
+                    Copy-Item $sourcePath $destPath -Force
+                } catch {
+                    # File may be locked by WT — use stream copy to overwrite
+                    try {
+                        $bytes = [System.IO.File]::ReadAllBytes($sourcePath)
+                        [System.IO.File]::WriteAllBytes($destPath, $bytes)
+                    } catch {
+                        Write-Warning "    Could not update $bgImage (file locked by WT — restart WT and re-run)"
+                    }
+                }
             }
             Write-Host "    ✓ $bgImage" -ForegroundColor Green
         } else {
@@ -120,99 +130,234 @@ foreach ($profile in $Config.profiles.PSObject.Properties) {
     }
 }
 
-# --- Generate Terminal Settings ---
+# --- Configure Terminal Profiles ---
+# Strategy: find and style EXISTING dynamic profiles (those with a 'source' field)
+# instead of creating new ones. This avoids crashes caused by duplicate profiles
+# with explicit commandlines conflicting with WT's auto-generated profiles.
 
-Write-Host "  Generating Windows Terminal settings..." -ForegroundColor Gray
+Write-Host "  Configuring Windows Terminal profiles..." -ForegroundColor Gray
 
-# Read existing settings to preserve actions/keybindings
 $existingSettings = Get-Content $terminalSettingsPath -Raw | ConvertFrom-Json
 
-# Build profiles list
-$profilesList = @()
-foreach ($profileEntry in $Config.profiles.PSObject.Properties) {
-    $p = $profileEntry.Value
-    $profileObj = @{
-        name              = $p.name
-        backgroundImage   = "ms-appdata:///roaming/$($p.background_image)"
-        backgroundImageOpacity = $p.background_image_opacity
-        colorScheme       = $p.color_scheme
-        cursorColor       = $p.cursor_color
-        cursorShape       = $p.cursor_shape
-        closeOnExit       = "graceful"
-        historySize       = 9001
-        hidden            = $false
-        font              = @{
-            face = $p.font_face
-            size = $p.font_size
-        }
-        opacity           = $p.opacity
-        useAcrylic        = $false
-    }
-
-    if ($p.commandline) { $profileObj.commandline = $p.commandline }
-    if ($p.background_color) { $profileObj.background = $p.background_color }
-    if ($p.tab_title) { $profileObj.tabTitle = $p.tab_title }
-    if ($p.elevate) { $profileObj.elevate = $true }
-    if ($p.starting_directory) { $profileObj.startingDirectory = $p.starting_directory }
-
-    # Generate a consistent GUID from the name
-    $guidBytes = [System.Text.Encoding]::UTF8.GetBytes($p.name)
-    $hash = [System.Security.Cryptography.MD5]::Create().ComputeHash($guidBytes)
-    $guid = [guid]::new([byte[]]$hash[0..15])
-    $profileObj.guid = "{$guid}"
-
-    $profilesList += $profileObj
-}
-
-# Preserve existing profiles that aren't in our theme (like VS Dev shells, etc.)
-$themeProfileNames = $Config.profiles.PSObject.Properties | ForEach-Object { $_.Value.name }
-$existingOtherProfiles = $existingSettings.profiles.list | Where-Object {
-    $_.name -notin $themeProfileNames -and
-    $_.name -ne "ubuntu" -and $_.name -ne "Ubuntu" -and
-    $_.name -ne "PowerShell" -and $_.name -ne "cmd" -and
-    $_.name -ne "Command Prompt" -and $_.name -ne "PowerShell (Admin)"
-}
-
-if ($existingOtherProfiles) {
-    $profilesList += $existingOtherProfiles
-}
-
-# Build color schemes
-$schemes = @()
+# --- Merge color schemes first (needed for stale scheme cleanup) ---
+$themeSchemes = @()
+$themeSchemeNames = @()
 foreach ($scheme in $Config.color_schemes) {
-    $schemes += $scheme
+    $themeSchemes += $scheme
+    $themeSchemeNames += $scheme.name
+}
+$mergedSchemes = @() + $themeSchemes
+if ($existingSettings.schemes) {
+    foreach ($existing in $existingSettings.schemes) {
+        if ($existing.name -notin $themeSchemeNames) {
+            $mergedSchemes += $existing
+        }
+    }
+}
+$mergedSchemeNames = $mergedSchemes | ForEach-Object { $_.name }
+
+# --- Helper: apply theme visual properties to a profile ---
+function Apply-ThemeStyling {
+    param(
+        [Parameter(Mandatory)] $TargetProfile,
+        [Parameter(Mandatory)] $ThemeProfile
+    )
+    if ($ThemeProfile.color_scheme) {
+        $TargetProfile | Add-Member -NotePropertyName colorScheme -NotePropertyValue $ThemeProfile.color_scheme -Force
+    }
+    if ($ThemeProfile.cursor_color) {
+        $TargetProfile | Add-Member -NotePropertyName cursorColor -NotePropertyValue $ThemeProfile.cursor_color -Force
+    }
+    if ($ThemeProfile.cursor_shape) {
+        $TargetProfile | Add-Member -NotePropertyName cursorShape -NotePropertyValue $ThemeProfile.cursor_shape -Force
+    }
+    if ($ThemeProfile.font_face -or $ThemeProfile.font_size) {
+        $font = @{}
+        if ($ThemeProfile.font_face) {
+            # Validate font exists — missing fonts can crash WT
+            $installedFonts = [System.Drawing.Text.InstalledFontCollection]::new().Families.Name
+            if ($installedFonts -contains $ThemeProfile.font_face) {
+                $font.face = $ThemeProfile.font_face
+            } else {
+                Write-Warning "Font '$($ThemeProfile.font_face)' not installed. Looking for fallback..."
+                $fallback = $installedFonts | Where-Object { $_ -match 'Nerd Font|NF' } | Select-Object -First 1
+                if ($fallback) {
+                    $font.face = $fallback
+                    Write-Host "  Using fallback font: $fallback"
+                } else {
+                    $font.face = "Cascadia Code"
+                    Write-Host "  No Nerd Font found, using Cascadia Code"
+                }
+            }
+        }
+        if ($ThemeProfile.font_size) { $font.size = $ThemeProfile.font_size }
+        $TargetProfile | Add-Member -NotePropertyName font -NotePropertyValue ([PSCustomObject]$font) -Force
+    }
+    if ($null -ne $ThemeProfile.opacity) {
+        # Never set opacity < 100 — it enables acrylic transparency which triggers
+        # a known WT crash (divide-by-zero in Terminal.Control.dll)
+        $TargetProfile.PSObject.Properties.Remove("opacity")
+    }
+    if ($ThemeProfile.background_image) {
+        $TargetProfile | Add-Member -NotePropertyName backgroundImage -NotePropertyValue "ms-appdata:///roaming/$($ThemeProfile.background_image)" -Force
+        if ($null -ne $ThemeProfile.background_image_opacity) {
+            $TargetProfile | Add-Member -NotePropertyName backgroundImageOpacity -NotePropertyValue $ThemeProfile.background_image_opacity -Force
+        }
+    } else {
+        $TargetProfile.PSObject.Properties.Remove("backgroundImage")
+        $TargetProfile.PSObject.Properties.Remove("backgroundImageOpacity")
+    }
+    if ($ThemeProfile.tab_title) {
+        $TargetProfile | Add-Member -NotePropertyName tabTitle -NotePropertyValue $ThemeProfile.tab_title -Force
+    }
+    $TargetProfile | Add-Member -NotePropertyName hidden -NotePropertyValue $false -Force
+    $TargetProfile | Add-Member -NotePropertyName historySize -NotePropertyValue 9001 -Force
+    $TargetProfile | Add-Member -NotePropertyName closeOnExit -NotePropertyValue "graceful" -Force
+    # Remove properties known to crash WT (divide-by-zero in Terminal.Control.dll)
+    $TargetProfile.PSObject.Properties.Remove("background")
+    $TargetProfile.PSObject.Properties.Remove("useAcrylic")
 }
 
-# Assemble final settings
-$newSettings = @{
-    '$help'   = "https://aka.ms/terminal-documentation"
-    '$schema' = "https://aka.ms/terminal-profiles-schema"
-    defaultProfile = $profilesList[0].guid
-    launchMode = $Config.launch_mode
-    theme = "dark"
-    themes = @()
-    "warning.confirmCloseAllTabs" = -not $Config.confirm_close_all_tabs
-    profiles = @{
-        defaults = @{}
-        list = $profilesList
+# --- Match theme profiles to existing dynamic profiles ---
+$profileMatchers = @{
+    'ubuntu'           = { param($p) $p.source -and $p.source -like 'CanonicalGroupLimited.Ubuntu*' }
+    'powershell'       = { param($p) $p.source -and $p.source -eq 'Windows.Terminal.PowershellCore' }
+    'cmd'              = { param($p) $p.guid -eq '{0caa0dad-35be-5f56-a8ff-afceeeaa6101}' }
+    'powershell_admin' = $null  # No dynamic equivalent — created if needed
+}
+
+$defaultProfileGuid = $null
+$styledProfileGuids = @()
+
+foreach ($profileEntry in $Config.profiles.PSObject.Properties) {
+    $themeKey = $profileEntry.Name
+    $themeProfile = $profileEntry.Value
+
+    $matcher = $profileMatchers[$themeKey]
+    $matched = $null
+
+    if ($matcher) {
+        $matched = $existingSettings.profiles.list | Where-Object { & $matcher $_ } | Select-Object -First 1
     }
-    schemes = $schemes
-    actions = $existingSettings.actions
-    keybindings = $existingSettings.keybindings
-    newTabMenu = @(@{ type = "remainingProfiles" })
+
+    if ($matched) {
+        Write-Host "    ✓ Styling dynamic profile: $($matched.name) (source: $($matched.source))" -ForegroundColor Green
+        Apply-ThemeStyling -TargetProfile $matched -ThemeProfile $themeProfile
+        $styledProfileGuids += $matched.guid
+        if ($themeKey -eq 'ubuntu') { $defaultProfileGuid = $matched.guid }
+    } elseif ($themeKey -eq 'powershell_admin' -and $themeProfile.elevate) {
+        $pwsh = Get-Command pwsh.exe -ErrorAction SilentlyContinue
+        if ($pwsh) {
+            $existingAdmin = $existingSettings.profiles.list | Where-Object {
+                $_.name -eq $themeProfile.name -and $_.elevate -eq $true
+            }
+            if ($existingAdmin) {
+                Write-Host "    ✓ Styling existing admin profile: $($existingAdmin.name)" -ForegroundColor Green
+                Apply-ThemeStyling -TargetProfile $existingAdmin -ThemeProfile $themeProfile
+                $existingAdmin | Add-Member -NotePropertyName elevate -NotePropertyValue $true -Force
+                $styledProfileGuids += $existingAdmin.guid
+            } else {
+                Write-Host "    + Creating admin profile: $($themeProfile.name)" -ForegroundColor Green
+                $adminGuid = "{$(New-Guid)}"
+                $adminProfile = [PSCustomObject]@{
+                    guid        = $adminGuid
+                    name        = $themeProfile.name
+                    commandline = "pwsh.exe"
+                    elevate     = $true
+                    hidden      = $false
+                }
+                if ($themeProfile.starting_directory) {
+                    $adminProfile | Add-Member -NotePropertyName startingDirectory -NotePropertyValue $themeProfile.starting_directory
+                }
+                Apply-ThemeStyling -TargetProfile $adminProfile -ThemeProfile $themeProfile
+                $existingSettings.profiles.list = @($existingSettings.profiles.list) + @($adminProfile)
+                $styledProfileGuids += $adminGuid
+            }
+        } else {
+            Write-Warning "    pwsh.exe not found on PATH — skipping admin profile"
+        }
+    } elseif ($themeKey -ne 'powershell_admin') {
+        Write-Warning "    No dynamic profile found for theme key '$themeKey' ($($themeProfile.name)) — skipping"
+    }
+}
+
+# --- Clean up stale theme-created profiles from previous runs ---
+# Stale profiles: no 'source' field, name matches a theme profile name,
+# and not one we just styled (i.e. leftover from old script that created new profiles)
+$themeProfileNames = $Config.profiles.PSObject.Properties | ForEach-Object { $_.Value.name }
+$cleanedList = @()
+foreach ($p in $existingSettings.profiles.list) {
+    $isStale = (
+        -not $p.source -and
+        $p.name -in $themeProfileNames -and
+        $p.guid -notin $styledProfileGuids
+    )
+    if ($isStale) {
+        Write-Host "    🗑 Removing stale profile: $($p.name) ($($p.guid))" -ForegroundColor Yellow
+    } else {
+        # Sanitize all preserved profiles
+        $p.PSObject.Properties.Remove("background")
+        $p.PSObject.Properties.Remove("useAcrylic")
+        if ($p.colorScheme -and $p.colorScheme -notin $mergedSchemeNames) {
+            Write-Host "    ℹ Removing stale colorScheme '$($p.colorScheme)' from '$($p.name)'" -ForegroundColor Gray
+            $p.PSObject.Properties.Remove("colorScheme")
+        }
+        $cleanedList += $p
+    }
+}
+
+# --- Set default profile with fallback ---
+if (-not $defaultProfileGuid) {
+    $ps7 = $cleanedList | Where-Object { $_.source -eq 'Windows.Terminal.PowershellCore' } | Select-Object -First 1
+    if ($ps7) { $defaultProfileGuid = $ps7.guid }
+    else { $defaultProfileGuid = $existingSettings.defaultProfile }
+    Write-Host "    ℹ No Ubuntu profile found — default set to fallback" -ForegroundColor Gray
+}
+
+# --- Update settings in-place (merge, don't rebuild from scratch) ---
+$existingSettings | Add-Member -NotePropertyName defaultProfile -NotePropertyValue $defaultProfileGuid -Force
+$existingSettings | Add-Member -NotePropertyName launchMode -NotePropertyValue $Config.launch_mode -Force
+$existingSettings | Add-Member -NotePropertyName theme -NotePropertyValue "dark" -Force
+$existingSettings.profiles.list = $cleanedList
+$existingSettings | Add-Member -NotePropertyName schemes -NotePropertyValue $mergedSchemes -Force
+if (-not $existingSettings.newTabMenu) {
+    $existingSettings | Add-Member -NotePropertyName newTabMenu -NotePropertyValue @(@{ type = "remainingProfiles" })
 }
 
 if ($DryRun) {
     Write-Host "    [DRY RUN] Would write settings to: $terminalSettingsPath" -ForegroundColor Yellow
-    Write-Host "    Profiles: $($profilesList.Count)" -ForegroundColor Gray
+    Write-Host "    Profiles: $($cleanedList.Count)" -ForegroundColor Gray
 } else {
-    # Backup existing settings
     $backupPath = "$terminalSettingsPath.backup.$(Get-Date -Format 'yyyyMMdd_HHmmss')"
     Copy-Item $terminalSettingsPath $backupPath
     Write-Host "    ✓ Backup: $backupPath" -ForegroundColor Green
-
-    $newSettings | ConvertTo-Json -Depth 10 | Set-Content $terminalSettingsPath -Encoding UTF8
+    $existingSettings | ConvertTo-Json -Depth 10 | Set-Content $terminalSettingsPath -Encoding UTF8
     Write-Host "    ✓ Settings written" -ForegroundColor Green
 }
 
 Write-Host "  ✓ Windows Terminal configured" -ForegroundColor Green
+
+# --- Configure console host font (for PowerShell/cmd outside Windows Terminal) ---
+$consoleFontName = $null
+$consoleFontSize = 14
+$psProfile = ($Config.profiles.PSObject.Properties | Where-Object { $_.Name -eq 'powershell' }).Value
+if ($psProfile) {
+    $consoleFontName = $psProfile.font_face
+    if ($psProfile.font_size) { $consoleFontSize = $psProfile.font_size }
+} else {
+    $firstProfile = ($Config.profiles.PSObject.Properties | Select-Object -First 1).Value
+    if ($firstProfile) { $consoleFontName = $firstProfile.font_face }
+}
+if ($consoleFontName) {
+    Write-Host "  Setting default console font to '$consoleFontName' (${consoleFontSize}pt)..." -ForegroundColor Gray
+    if (-not $DryRun) {
+        $consoleRegPath = "HKCU:\Console"
+        Set-ItemProperty -Path $consoleRegPath -Name "FaceName" -Value $consoleFontName
+        # FontSize DWORD: height in the high word (height << 16)
+        Set-ItemProperty -Path $consoleRegPath -Name "FontSize" -Value ([int]($consoleFontSize -shl 16))
+        Set-ItemProperty -Path $consoleRegPath -Name "FontFamily" -Value 0x36  # TrueType
+        Write-Host "    ✓ Console font set" -ForegroundColor Green
+    } else {
+        Write-Host "    [DRY RUN] Would set console font" -ForegroundColor Yellow
+    }
+}

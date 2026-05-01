@@ -15,7 +15,7 @@
     Where to save the .zip. Defaults to themes/<name>.zip.
 
 .EXAMPLE
-    .\package-theme.ps1 -Theme star-wars
+    .\package-theme.ps1 -Theme starwars
     .\package-theme.ps1 -Theme motogp -OutputPath C:\exports\motogp.zip
 #>
 

@@ -24,20 +24,20 @@
     Path to a theme folder, .json file, or .zip package (overrides -Theme).
 
 .EXAMPLE
-    .\install.ps1 -Theme star-wars
+    .\install.ps1 -Theme starwars
     .\install.ps1 -Theme motogp -Exclude wallpaper,screensaver
-    .\install.ps1 -Theme star-wars -Components terminal,wsl
+    .\install.ps1 -Theme starwars -Components terminal,wsl
     .\install.ps1 -ThemeFile C:\Downloads\my-theme.zip -DryRun
 #>
 
 [CmdletBinding()]
 param(
     [Parameter(Position = 0)]
-    [string]$Theme = "star-wars",
+    [string]$Theme = "starwars",
 
     [string[]]$Components = @("wallpaper", "screensaver", "terminal", "wsl", "powershell", "vscode"),
 
-    [string[]]$Exclude = @(),
+    [string[]]$Exclude = @("wallpaper", "screensaver"),
 
     [switch]$DryRun,
 
@@ -165,7 +165,7 @@ if ("wsl" -in $activeComponents -and $themeConfig.components.wsl.enabled) {
 
 if ("powershell" -in $activeComponents -and $themeConfig.components.powershell.enabled) {
     Write-Step "Configuring PowerShell"
-    & "$ScriptRoot\scripts\configure-powershell.ps1" -Config $themeConfig.components.powershell -DryRun:$DryRun
+    & "$ScriptRoot\scripts\configure-powershell.ps1" -Config $themeConfig.components.powershell -ThemePath $themePath -DryRun:$DryRun
 } elseif ("powershell" -in $Exclude) {
     Write-Skip "PowerShell (excluded)"
 }

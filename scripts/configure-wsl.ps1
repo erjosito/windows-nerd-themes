@@ -34,16 +34,16 @@ if ! command -v zsh &>/dev/null; then
 fi
 
 # Install oh-my-zsh if not present
-if [ ! -d "\$HOME/.oh-my-zsh" ]; then
+if [ ! -d "`$HOME/.oh-my-zsh" ]; then
     echo "    Installing oh-my-zsh..."
-    sh -c "\$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    sh -c "`$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 fi
 
 # Install powerlevel10k theme
-THEME_DIR="\$HOME/.oh-my-zsh/custom/themes/powerlevel10k"
-if [ ! -d "\$THEME_DIR" ]; then
+THEME_DIR="`$HOME/.oh-my-zsh/custom/themes/powerlevel10k"
+if [ ! -d "`$THEME_DIR" ]; then
     echo "    Installing powerlevel10k..."
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "\$THEME_DIR"
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "`$THEME_DIR"
 fi
 
 # Install custom plugins
@@ -92,7 +92,7 @@ if ($Config.tools.nvm.enabled) {
     $wslScript += @"
 
 # Install nvm
-if [ ! -d "\$HOME/.nvm" ]; then
+if [ ! -d "`$HOME/.nvm" ]; then
     echo "    Installing nvm..."
     curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 fi
@@ -159,14 +159,14 @@ $wslScript += @"
 
 # Write .zshrc
 echo "    Writing .zshrc..."
-cat > "\$HOME/.zshrc" << 'ZSHRC_EOF'
+cat > "`$HOME/.zshrc" << 'ZSHRC_EOF'
 $zshrcContent
 ZSHRC_EOF
 
 # Set zsh as default shell
-if [ "\$SHELL" != "/usr/bin/zsh" ] && [ "\$SHELL" != "/bin/zsh" ]; then
+if [ "`$SHELL" != "/usr/bin/zsh" ] && [ "`$SHELL" != "/bin/zsh" ]; then
     echo "    Setting zsh as default shell..."
-    sudo chsh -s \$(which zsh) \$(whoami)
+    sudo chsh -s `$(which zsh) `$(whoami)
 fi
 
 echo "  ✓ WSL configured successfully"

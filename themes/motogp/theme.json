@@ -7,6 +7,8 @@
     "wallpaper": {
       "enabled": true,
       "image": "wallpapers/desktop_motogp.jpg",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Bagnaia_mugello_2023.jpg/1920px-Bagnaia_mugello_2023.jpg",
+      "image_credit": "Bagnaia Mugello 2023 by René Pierotti, CC BY-SA 4.0, via Wikimedia Commons",
       "style": "fill"
     },
 
@@ -74,60 +76,61 @@
         "ubuntu": {
           "name": "Ubuntu",
           "commandline": "%SystemRoot%\\System32\\wsl.exe -d Ubuntu",
-          "background_image": "wallpapers/bagnaia_ducati.jpg",
+          "background_image": "wallpapers/trackhouse_aprilia_dark.jpg",
           "background_image_opacity": 0.70,
           "color_scheme": "RacingRed",
-          "font_face": "Mononoki Nerd Font",
-          "font_size": 10,
+          "font_face": "mononoki Nerd Font",
+          "font_size": 12,
           "opacity": 70,
           "cursor_shape": "bar",
           "cursor_color": "#FF2D2D",
-          "tab_title": "Ubuntu (Bagnaia)",
+          "tab_title": "Ubuntu",
           "icon": "linux"
         },
         "powershell": {
           "name": "PowerShell",
           "commandline": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
-          "background_image": "wallpapers/marquez_lean.jpg",
+          "starting_directory": "%USERPROFILE%",
+          "background_image": "wallpapers/marquez_ducati_dark.jpg",
           "background_image_opacity": 0.70,
           "color_scheme": "PodiumGold",
-          "font_face": "Mononoki Nerd Font",
-          "font_size": 10,
+          "font_face": "Hack Nerd Font",
+          "font_size": 12,
           "opacity": 55,
           "cursor_shape": "bar",
           "cursor_color": "#FFD700",
-          "background_color": "#0D0D0D",
-          "tab_title": "PowerShell (Marquez)",
+          "tab_title": "PowerShell",
           "icon": "powershell"
         },
         "powershell_admin": {
           "name": "PowerShell (Admin)",
           "commandline": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
           "elevate": true,
-          "background_image": "wallpapers/acosta_speed.jpg",
+          "starting_directory": "%USERPROFILE%",
+          "background_image": "wallpapers/marcmarquez_gresini_dark.jpg",
           "background_image_opacity": 0.70,
           "color_scheme": "RacingRed",
-          "font_face": "Mononoki Nerd Font",
-          "font_size": 10,
+          "font_face": "Hack Nerd Font",
+          "font_size": 12,
           "opacity": 55,
           "cursor_shape": "bar",
           "cursor_color": "#FF2D2D",
-          "background_color": "#1A0A0A",
-          "tab_title": "Admin (Acosta)",
+          "tab_title": "Admin",
           "icon": "powershell"
         },
         "cmd": {
           "name": "Command Prompt",
           "commandline": "%SystemRoot%\\System32\\cmd.exe",
-          "background_image": "wallpapers/martin_aprilia.jpg",
+          "starting_directory": "%USERPROFILE%",
+          "background_image": "wallpapers/binder_ktm_dark.jpg",
           "background_image_opacity": 0.70,
           "color_scheme": "PodiumGold",
-          "font_face": "Mononoki Nerd Font",
-          "font_size": 10,
+          "font_face": "Hack Nerd Font",
+          "font_size": 12,
           "opacity": 70,
           "cursor_shape": "bar",
           "cursor_color": "#FFD700",
-          "tab_title": "CMD (Martin)",
+          "tab_title": "CMD",
           "icon": "cmd"
         }
       },
@@ -136,13 +139,17 @@
         {
           "name": "Mononoki Nerd Font",
           "url": "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Mononoki.zip"
+        },
+        {
+          "name": "Hack Nerd Font",
+          "url": "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Hack.zip"
         }
       ]
     },
 
     "wsl": {
       "enabled": true,
-      "distro": "Ubuntu",
+      "distro": "Ubuntu-24.04",
       "shell": "zsh",
       "oh_my_zsh": {
         "theme": "powerlevel10k/powerlevel10k",
@@ -231,7 +238,8 @@
       "enabled": true,
       "oh_my_posh": {
         "enabled": true,
-        "theme": "racing"
+        "theme": "motogp",
+        "custom_theme_file": "motogp.omp.json"
       },
       "modules": [
         "PSReadLine",

@@ -1,0 +1,225 @@
+{
+  "name": "Minimal",
+  "description": "A clean, no-wallpaper theme with distinct solarized-inspired color schemes per terminal type",
+  "author": "erjosito",
+
+  "components": {
+    "wallpaper": {
+      "enabled": false
+    },
+
+    "screensaver": {
+      "enabled": false
+    },
+
+    "windows_terminal": {
+      "enabled": true,
+      "launch_mode": "maximized",
+      "confirm_close_all_tabs": false,
+
+      "color_schemes": [
+        {
+          "name": "SolarizedDarkWarm",
+          "background": "#002B36",
+          "foreground": "#839496",
+          "black": "#073642",
+          "blue": "#268BD2",
+          "cyan": "#2AA198",
+          "green": "#859900",
+          "purple": "#D33682",
+          "red": "#DC322F",
+          "white": "#EEE8D5",
+          "yellow": "#B58900",
+          "brightBlack": "#586E75",
+          "brightBlue": "#839496",
+          "brightCyan": "#93A1A1",
+          "brightGreen": "#586E75",
+          "brightPurple": "#6C71C4",
+          "brightRed": "#CB4B16",
+          "brightWhite": "#FDF6E3",
+          "brightYellow": "#657B83",
+          "cursorColor": "#859900",
+          "selectionBackground": "#2E4F4F"
+        },
+        {
+          "name": "SolarizedDarkCool",
+          "background": "#001E26",
+          "foreground": "#93A1A1",
+          "black": "#002B36",
+          "blue": "#268BD2",
+          "cyan": "#2AA198",
+          "green": "#719E07",
+          "purple": "#6C71C4",
+          "red": "#DC322F",
+          "white": "#EEE8D5",
+          "yellow": "#B58900",
+          "brightBlack": "#657B83",
+          "brightBlue": "#839496",
+          "brightCyan": "#93A1A1",
+          "brightGreen": "#586E75",
+          "brightPurple": "#D33682",
+          "brightRed": "#CB4B16",
+          "brightWhite": "#FDF6E3",
+          "brightYellow": "#839496",
+          "cursorColor": "#268BD2",
+          "selectionBackground": "#1A3A4A"
+        },
+        {
+          "name": "SolarizedDarkViolet",
+          "background": "#1A1A2E",
+          "foreground": "#B8C0D0",
+          "black": "#0F0F1E",
+          "blue": "#268BD2",
+          "cyan": "#2AA198",
+          "green": "#859900",
+          "purple": "#6C71C4",
+          "red": "#DC322F",
+          "white": "#EEE8D5",
+          "yellow": "#B58900",
+          "brightBlack": "#586E75",
+          "brightBlue": "#839496",
+          "brightCyan": "#93A1A1",
+          "brightGreen": "#586E75",
+          "brightPurple": "#D33682",
+          "brightRed": "#CB4B16",
+          "brightWhite": "#FDF6E3",
+          "brightYellow": "#657B83",
+          "cursorColor": "#6C71C4",
+          "selectionBackground": "#2A2A4E"
+        }
+      ],
+
+      "profiles": {
+        "ubuntu": {
+          "name": "Ubuntu",
+          "commandline": "%SystemRoot%\\System32\\wsl.exe -d Ubuntu",
+          "color_scheme": "SolarizedDarkWarm",
+          "font_face": "mononoki Nerd Font",
+          "font_size": 12,
+          "opacity": 100,
+          "cursor_shape": "bar",
+          "cursor_color": "#859900",
+          "tab_title": "Ubuntu",
+          "icon": "linux"
+        },
+        "powershell": {
+          "name": "PowerShell",
+          "commandline": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+          "starting_directory": "%USERPROFILE%",
+          "color_scheme": "SolarizedDarkCool",
+          "font_face": "JetBrainsMono NF",
+          "font_size": 12,
+          "opacity": 100,
+          "cursor_shape": "bar",
+          "cursor_color": "#268BD2",
+          "tab_title": "PowerShell",
+          "icon": "powershell"
+        },
+        "powershell_admin": {
+          "name": "PowerShell (Admin)",
+          "commandline": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+          "elevate": true,
+          "starting_directory": "%USERPROFILE%",
+          "color_scheme": "SolarizedDarkViolet",
+          "font_face": "JetBrainsMono NF",
+          "font_size": 12,
+          "opacity": 100,
+          "cursor_shape": "bar",
+          "cursor_color": "#6C71C4",
+          "tab_title": "PowerShell (Admin)",
+          "icon": "powershell"
+        },
+        "cmd": {
+          "name": "Command Prompt",
+          "commandline": "%SystemRoot%\\System32\\cmd.exe",
+          "starting_directory": "%USERPROFILE%",
+          "color_scheme": "SolarizedDarkWarm",
+          "font_face": "JetBrainsMono NF",
+          "font_size": 12,
+          "opacity": 100,
+          "cursor_shape": "bar",
+          "cursor_color": "#B58900",
+          "tab_title": "CMD",
+          "icon": "cmd"
+        }
+      },
+
+      "nerd_fonts": [
+        {
+          "name": "mononoki Nerd Font",
+          "url": "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Mononoki.zip"
+        },
+        {
+          "name": "JetBrainsMono NF",
+          "url": "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip"
+        }
+      ]
+    },
+
+    "wsl": {
+      "enabled": true,
+      "distro": "Ubuntu",
+      "shell": "zsh",
+      "oh_my_zsh": {
+        "theme": "powerlevel10k/powerlevel10k",
+        "plugins": [
+          "git",
+          "zsh-autosuggestions",
+          "zsh-syntax-highlighting",
+          "history-substring-search"
+        ],
+        "custom_plugins": [
+          {
+            "name": "zsh-autosuggestions",
+            "repo": "https://github.com/zsh-users/zsh-autosuggestions"
+          },
+          {
+            "name": "zsh-syntax-highlighting",
+            "repo": "https://github.com/zsh-users/zsh-syntax-highlighting"
+          }
+        ],
+        "settings": {
+          "ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE": "fg=244"
+        }
+      },
+      "tools": {
+        "tmux": {
+          "enabled": false
+        },
+        "kubectl": {
+          "enabled": false
+        },
+        "nvm": {
+          "enabled": true
+        }
+      },
+      "aliases": {},
+      "path_additions": [
+        "$HOME/.local/bin"
+      ]
+    },
+
+    "vscode": {
+      "enabled": false
+    },
+
+    "powershell": {
+      "enabled": true,
+      "oh_my_posh": {
+        "enabled": true,
+        "theme": "clean-detailed"
+      },
+      "modules": [
+        "PSReadLine",
+        "Terminal-Icons"
+      ],
+      "completions": {
+        "az_cli": false,
+        "kubectl": false
+      },
+      "aliases": {}
+    }
+  }
+}
+
+

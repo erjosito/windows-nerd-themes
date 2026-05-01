@@ -6,6 +6,8 @@ param(
     [Parameter(Mandatory)]
     [PSCustomObject]$Config,
 
+    [string]$ThemePath,
+
     [switch]$DryRun
 )
 
@@ -66,8 +68,41 @@ $profileContent = @"
 
 # oh-my-posh initialization
 if ($Config.oh_my_posh.enabled) {
-    $theme = $Config.oh_my_posh.theme
-    if ($theme -and $theme -ne "default") {
+    $customTheme = $Config.oh_my_posh.custom_theme
+    if ($customTheme) {
+        # Write custom oh-my-posh theme to disk
+        $ompThemePath = Join-Path $profileDir "windows-nerd-themes.omp.json"
+        if ($DryRun) {
+            Write-Host "    [DRY RUN] Would write custom oh-my-posh theme to: $ompThemePath" -ForegroundColor Yellow
+        } else {
+            $customTheme | ConvertTo-Json -Depth 20 | Set-Content $ompThemePath -Encoding UTF8
+            Write-Host "    ✓ Custom oh-my-posh theme written to: $ompThemePath" -ForegroundColor Green
+        }
+        $profileContent += @"
+# oh-my-posh with custom theme
+oh-my-posh init pwsh --config "$ompThemePath" | Invoke-Expression
+
+"@
+    } elseif ($Config.oh_my_posh.theme -and $Config.oh_my_posh.theme -ne "default") {
+        $theme = $Config.oh_my_posh.theme
+        # Check if theme has a custom file in the theme directory
+        $customThemeFile = $Config.oh_my_posh.custom_theme_file
+        if ($customThemeFile) {
+            $themeBasePath = $ThemePath
+            $srcFile = if ($themeBasePath) { Join-Path $themeBasePath $customThemeFile } else { $null }
+            if ($srcFile -and (Test-Path $srcFile)) {
+                $dstFile = "$env:POSH_THEMES_PATH\$theme.omp.json"
+                if (-not $DryRun) {
+                    Copy-Item $srcFile $dstFile -Force
+                    Write-Host "    ✓ Custom oh-my-posh theme '$theme' installed" -ForegroundColor Green
+                }
+            }
+        }
+        $ompThemeFile = "$env:POSH_THEMES_PATH\$theme.omp.json"
+        if (-not (Test-Path $ompThemeFile)) {
+            Write-Warning "    oh-my-posh theme '$theme' not found at: $ompThemeFile — falling back to 'agnoster'"
+            $theme = "agnoster"
+        }
         $profileContent += @"
 # oh-my-posh with theme
 oh-my-posh init pwsh --config "`$env:POSH_THEMES_PATH\$theme.omp.json" | Invoke-Expression
